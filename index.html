@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Art Prompt Bowls ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Paytone+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --c1:#ff6b6b;--c2:#ffd93d;--c3:#4ecb71;--c4:#60a5fa;
+  --c1g:rgba(255,107,107,0.25);--c2g:rgba(255,217,61,0.25);--c3g:rgba(78,203,113,0.25);--c4g:rgba(96,165,250,0.25);
+  --bg:#0d0b1e;--surface:rgba(255,255,255,0.07);--surface2:rgba(255,255,255,0.12);
+  --border:rgba(255,255,255,0.13);--border2:rgba(255,255,255,0.22);
+  --text:#f0edff;--muted:rgba(240,237,255,0.5);
+}
+html,body{min-height:100vh;overflow-x:hidden}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);position:relative}
+
+/* BG ORBS */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.20}
+.o1{width:600px;height:600px;background:#ff6b6b;top:-150px;left:-150px;animation:od 20s ease-in-out infinite alternate}
+.o2{width:500px;height:500px;background:#60a5fa;bottom:-100px;right:-100px;animation:od 25s ease-in-out infinite alternate-reverse}
+.o3{width:350px;height:350px;background:#4ecb71;top:45%;left:35%;animation:od 17s ease-in-out infinite alternate}
+.o4{width:280px;height:280px;background:#ffd93d;bottom:25%;right:25%;animation:od 22s ease-in-out infinite alternate-reverse}
+@keyframes od{0%{transform:translate(0,0) scale(1)}100%{transform:translate(50px,40px) scale(1.15)}}
+
+/* STAR FIELD */
+#starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* LAYOUT */
+.app{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+
+/* HEADER */
+header{text-align:center;margin-bottom:3rem}
+.logo-text{
+  font-family:'Paytone One',sans-serif;
+  font-size:clamp(2.4rem,7vw,4rem);
+  line-height:1;
+  letter-spacing:-1px;
+  background:linear-gradient(135deg,#ff6b6b,#ffd93d,#4ecb71,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(255,107,107,0.4));
+  animation:titlePop .6s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes titlePop{0%{opacity:0;transform:scale(.7) translateY(-20px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+.subtitle{
+  margin-top:.6rem;font-size:1.05rem;font-weight:700;color:var(--muted);letter-spacing:.5px;
+  animation:fadeUp .5s .2s ease both;
+}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+
+/* PROGRESS PIPS */
+.progress-row{display:flex;gap:10px;justify-content:center;margin-bottom:2rem;animation:fadeUp .5s .3s ease both}
+.pip{
+  width:44px;height:10px;border-radius:99px;
+  background:var(--surface2);border:1.5px solid var(--border);
+  transition:background .4s,box-shadow .4s;
+}
+.pip.done{box-shadow:0 0 10px var(--pip-color),0 0 20px var(--pip-color)}
+
+/* BOWLS GRID */
+.bowls-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  margin-bottom:2rem;
+  animation:fadeUp .5s .35s ease both;
+}
+@media(max-width:600px){.bowls-grid{grid-template-columns:repeat(2,1fr)}}
+
+.bowl-col{display:flex;flex-direction:column;align-items:center;gap:12px}
+
+.bowl-label{
+  font-size:.7rem;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* GLASS BOWL */
+.bowl-btn{
+  width:100%;aspect-ratio:1/.75;position:relative;cursor:pointer;
+  background:none;border:none;padding:0;outline:none;
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,.4));
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1);
+}
+.bowl-btn:hover{transform:scale(1.08) translateY(-4px)}
+.bowl-btn:active{transform:scale(.94)}
+
+.bowl-svg{width:100%;height:100%}
+
+/* Paper slips */
+.slips{position:absolute;top:-12px;left:50%;transform:translateX(-50%);display:flex;gap:5px}
+.slip{
+  width:16px;height:30px;border-radius:4px 4px 2px 2px;opacity:.95;
+  transform-origin:bottom center;
+  animation:slipWiggle 3s ease-in-out infinite;
+}
+.slip:nth-child(1){background:#fff9d6;transform:rotate(-14deg);animation-delay:0s}
+.slip:nth-child(2){background:#fffbea;transform:rotate(3deg) translateY(-5px);animation-delay:.3s}
+.slip:nth-child(3){background:#fff3c4;transform:rotate(15deg);animation-delay:.15s}
+@keyframes slipWiggle{0%,100%{transform-origin:bottom center}50%{transform:rotate(calc(var(--r,0deg) + 3deg))}}
+
+/* BADGE */
+.badge{
+  font-family:'Paytone One',sans-serif;
+  font-size:1rem;padding:8px 22px;
+  border-radius:99px;color:#fff;
+  min-width:110px;text-align:center;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  border:2px solid rgba(255,255,255,.2);
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+}
+.badge.empty{
+  background:var(--surface);color:var(--muted);
+  font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:800;
+  letter-spacing:.5px;border-color:var(--border);
+}
+.badge.filled{animation:badgePop .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes badgePop{0%{transform:scale(.4) rotate(-12deg);opacity:0}65%{transform:scale(1.2) rotate(2deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+
+/* PICK BUTTON */
+.pick-btn{
+  font-family:'Paytone One',sans-serif;
+  font-size:.85rem;padding:8px 20px;
+  border:none;border-radius:99px;cursor:pointer;
+  color:#fff;letter-spacing:.5px;
+  box-shadow:0 4px 0 rgba(0,0,0,.3);
+  transition:transform .1s,box-shadow .1s;
+  position:relative;overflow:hidden;
+}
+.pick-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(rgba(255,255,255,.15),transparent);
+  border-radius:inherit;
+}
+.pick-btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,0,0,.3)}
+.pick-btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
+
+/* PROMPT CARD */
+.prompt-wrap{animation:fadeUp .5s .4s ease both}
+.prompt-card{
+  background:var(--surface);
+  backdrop-filter:blur(20px);
+  border:1.5px solid var(--border2);
+  border-radius:32px;
+  padding:2.5rem 2rem;
+  text-align:center;
+  position:relative;
+  min-height:160px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.75rem;
+  transition:border-color .5s,box-shadow .5s;
+  overflow:hidden;
+}
+.prompt-card::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.07),transparent 60%);
+  pointer-events:none;
+}
+.prompt-card.complete{
+  border-color:rgba(255,217,61,.5);
+  box-shadow:0 0 40px rgba(255,217,61,.12),0 0 80px rgba(255,107,107,.08),inset 0 0 30px rgba(255,255,255,.03);
+}
+
+.prompt-waiting{font-size:1rem;font-weight:800;color:var(--muted);letter-spacing:.3px}
+
+.prompt-label{
+  font-size:.7rem;font-weight:900;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);
+}
+.prompt-words{
+  font-family:'Paytone One',sans-serif;
+  font-size:clamp(1.5rem,4vw,2.2rem);
+  line-height:1.3;
+}
+.pw1{color:var(--c1);filter:drop-shadow(0 0 8px rgba(255,107,107,.5))}
+.pw2{color:var(--c2);filter:drop-shadow(0 0 8px rgba(255,217,61,.5))}
+.pw3{color:var(--c3);filter:drop-shadow(0 0 8px rgba(78,203,113,.5))}
+.pw4{color:var(--c4);filter:drop-shadow(0 0 8px rgba(96,165,250,.5))}
+.sep{color:rgba(255,255,255,.25);margin:0 4px}
+
+/* THEME SELECTOR */
+.theme-row{
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:2rem;animation:fadeUp .5s .28s ease both;
+}
+.theme-btn{
+  font-family:'Paytone One',sans-serif;font-size:.82rem;
+  padding:9px 18px;border-radius:99px;cursor:pointer;
+  background:var(--surface);border:1.5px solid var(--border);
+  color:var(--muted);letter-spacing:.3px;
+  transition:all .2s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.theme-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.1),transparent);border-radius:inherit;pointer-events:none}
+.theme-btn:hover{transform:translateY(-2px) scale(1.05);color:var(--text);border-color:var(--border2)}
+.theme-btn.active{
+  color:#fff;border-color:transparent;
+  box-shadow:0 0 16px var(--theme-glow),0 4px 12px rgba(0,0,0,.4);
+  transform:translateY(-2px) scale(1.06);
+}
+.theme-mini{font-size:1rem;margin-right:4px}
+
+/* NAME CARD */
+.name-card{
+  margin-top:.75rem;
+  background:rgba(251,191,36,0.08);
+  backdrop-filter:blur(16px);
+  border:1.5px solid rgba(251,191,36,.28);
+  border-radius:24px;
+  padding:1.25rem 1.75rem;
+  display:none;
+  animation:slideDown .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.name-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(251,191,36,.5),transparent)}
+.name-card.visible{display:block}
+.name-header{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
+.name-tag{font-size:.65rem;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;color:rgba(251,191,36,.85)}
+.name-value{
+  font-family:'Paytone One',sans-serif;
+  font-size:clamp(1.3rem,3.5vw,1.9rem);
+  color:#fef3c7;
+  filter:drop-shadow(0 0 12px rgba(251,191,36,.4));
+  line-height:1.2;
+}
+.name-tagline{font-size:.95rem;font-weight:700;color:rgba(254,243,199,.6);margin-top:.3rem;line-height:1.5}
+
+/* SPINNING STAR */
+.spin-star{
+  font-size:1.8rem;position:absolute;top:-18px;left:50%;
+  transform:translateX(-50%);
+  animation:spinStar 8s linear infinite;
+  filter:drop-shadow(0 0 6px #ffd93d);
+}
+@keyframes spinStar{to{transform:translateX(-50%) rotate(360deg)}}
+
+/* INSPIRATION CARD */
+.insp-card{
+  margin-top:1rem;
+  background:rgba(167,139,250,0.1);
+  backdrop-filter:blur(16px);
+  border:1.5px solid rgba(167,139,250,.3);
+  border-radius:24px;
+  padding:1.5rem 1.75rem;
+  display:none;
+  animation:slideDown .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+}
+.insp-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(167,139,250,.6),transparent);
+}
+.insp-card.visible{display:block}
+@keyframes slideDown{0%{opacity:0;transform:translateY(-16px) scale(.97)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.insp-header{display:flex;align-items:center;gap:8px;margin-bottom:.6rem}
+.insp-tag{
+  font-size:.65rem;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;
+  color:rgba(167,139,250,.9);
+}
+.insp-text{font-size:1.05rem;font-weight:700;color:rgba(240,237,255,.9);line-height:1.7}
+.loading-dots{display:flex;align-items:center;gap:6px;color:rgba(167,139,250,.8);font-weight:800;font-size:.95rem}
+.dot{width:8px;height:8px;border-radius:50%;background:#a78bfa;display:inline-block;animation:dotB 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes dotB{0%,80%,100%{transform:scale(.7);opacity:.5}40%{transform:scale(1.25);opacity:1}}
+
+/* ACTION BUTTONS */
+.actions{
+  display:flex;gap:12px;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;
+  animation:fadeUp .5s .5s ease both;
+}
+.btn{
+  font-family:'Paytone One',sans-serif;
+  font-size:1.05rem;padding:14px 32px;
+  border:none;border-radius:99px;cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:transform .12s,box-shadow .12s;
+  letter-spacing:.3px;
+}
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(rgba(255,255,255,.18),transparent);
+  border-radius:inherit;
+}
+.btn-inspire{
+  background:linear-gradient(135deg,#7c3aed,#a78bfa);
+  color:#fff;box-shadow:0 5px 0 #4c1d95,0 8px 20px rgba(124,58,237,.35);
+  display:none;
+}
+.btn-inspire.visible{display:inline-block;animation:badgePop .4s cubic-bezier(.34,1.56,.64,1)}
+.btn-inspire:hover{transform:translateY(-3px);box-shadow:0 8px 0 #4c1d95,0 12px 24px rgba(124,58,237,.4)}
+.btn-inspire:active{transform:translateY(2px);box-shadow:0 3px 0 #4c1d95}
+.btn-inspire:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-name{font-family:'Paytone One',sans-serif;font-size:1.05rem;padding:14px 32px;border:none;border-radius:99px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s,box-shadow .12s;letter-spacing:.3px}
+.btn-name::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.18),transparent);border-radius:inherit}
+.btn-name.visible{display:inline-block;animation:badgePop .4s cubic-bezier(.34,1.56,.64,1)}
+.btn-name:hover{transform:translateY(-3px);box-shadow:0 8px 0 #92400e,0 12px 24px rgba(217,119,6,.4)}
+.btn-name:active{transform:translateY(2px);box-shadow:0 3px 0 #92400e}
+.btn-name:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.btn-shuffle{
+  background:linear-gradient(135deg,#ff6b6b,#ff8e53);
+  color:#fff;box-shadow:0 5px 0 #b91c1c,0 8px 20px rgba(255,107,107,.35);
+}
+.btn-shuffle:hover{transform:translateY(-3px);box-shadow:0 8px 0 #b91c1c,0 12px 24px rgba(255,107,107,.4)}
+.btn-shuffle:active{transform:translateY(2px);box-shadow:0 3px 0 #b91c1c}
+
+.btn-clear{
+  background:var(--surface2);color:var(--muted);
+  border:1.5px solid var(--border2);
+  box-shadow:0 4px 0 rgba(0,0,0,.3);
+  font-size:.9rem;padding:12px 24px;
+}
+.btn-clear:hover{transform:translateY(-2px);background:var(--surface);color:var(--text)}
+.btn-clear:active{transform:translateY(1px)}
+
+/* PARTICLE BURST */
+.particle{position:fixed;pointer-events:none;z-index:999;font-size:1.4rem;animation:pFly .85s ease-out forwards}
+@keyframes pFly{0%{transform:translate(0,0) scale(1) rotate(0deg);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0) rotate(var(--rot));opacity:0}}
+
+/* WOBBLE */
+@keyframes bowlWobble{
+  0%,100%{transform:scale(1.08) rotate(0)}
+  20%{transform:scale(1.1) rotate(-9deg)}
+  40%{transform:scale(1.09) rotate(9deg)}
+  60%{transform:scale(1.08) rotate(-5deg)}
+  80%{transform:scale(1.09) rotate(5deg)}
+}
+.wobble{animation:bowlWobble .5s ease}
+
+/* RIPPLE */
+.ripple{
+  position:absolute;border-radius:50%;
+  background:rgba(255,255,255,.3);
+  transform:scale(0);animation:rippleOut .6s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes rippleOut{to{transform:scale(4);opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="bg-layer">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+  <div class="orb o4"></div>
+</div>
+<canvas id="starfield" style="position:fixed;inset:0;z-index:0;pointer-events:none"></canvas>
+
+<div class="app">
+  <header>
+    <div class="logo-text">Art Prompt Bowls</div>
+    <p class="subtitle">Pick one slip from each bowl — then draw what you get! 🎨</p>
+  </header>
+
+  <div style="text-align:center;margin-bottom:.6rem;animation:fadeUp .5s .24s ease both">
+    <span style="font-size:.7rem;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted)">🌍 Choose your world</span>
+  </div>
+  <div class="theme-row" id="themeRow"></div>
+
+  <div class="progress-row" id="progressRow"></div>
+  <div class="bowls-grid" id="bowlsGrid"></div>
+
+  <div class="prompt-wrap">
+    <div class="prompt-card" id="promptCard">
+      <span class="spin-star">⭐</span>
+      <p class="prompt-waiting">Pick from all 4 bowls to reveal your prompt!</p>
+    </div>
+    <div class="insp-card" id="inspCard">
+      <div class="insp-header">
+        <span style="font-size:1.3rem">🔮</span>
+        <span class="insp-tag">Imagination Spark</span>
+      </div>
+      <div class="insp-text" id="inspText"></div>
+    </div>
+  </div>
+    <div class="name-card" id="nameCard">
+      <div class="name-header">
+        <span style="font-size:1.3rem">🏷️</span>
+        <span class="name-tag">Character Name</span>
+      </div>
+      <div class="name-value" id="nameValue"></div>
+      <div class="name-tagline" id="nameTagline"></div>
+    </div>
+
+  <div class="actions">
+    <button class="btn btn-inspire" id="inspireBtn" onclick="getInspiration()">✨ Inspire me!</button>
+    <button class="btn btn-name" id="nameBtn" onclick="getName()" style="background:linear-gradient(135deg,#d97706,#fbbf24);color:#fff;box-shadow:0 5px 0 #92400e,0 8px 20px rgba(217,119,6,.35);display:none;">🏷️ Name it!</button>
+    <button class="btn btn-shuffle" onclick="shuffleAll()">🎲 Shuffle All!</button>
+    <button class="btn btn-clear" onclick="clearAll()">✕ Start Over</button>
+  </div>
+</div>
+
+<script>
+// ── AUDIO ENGINE ──
+const AC = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, type='sine', dur=0.18, vol=0.18, delay=0) {
+  try {
+    const o = AC.createOscillator();
+    const g = AC.createGain();
+    o.connect(g); g.connect(AC.destination);
+    o.type = type; o.frequency.setValueAtTime(freq, AC.currentTime + delay);
+    g.gain.setValueAtTime(0, AC.currentTime + delay);
+    g.gain.linearRampToValueAtTime(vol, AC.currentTime + delay + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + delay + dur);
+    o.start(AC.currentTime + delay);
+    o.stop(AC.currentTime + delay + dur + 0.02);
+  } catch(e) {}
+}
+
+function playPick(color) {
+  const freqs = { '#ff6b6b':[440,550], '#ffd93d':[523,659], '#4ecb71':[392,494], '#60a5fa':[349,440] };
+  const f = freqs[color] || [440,550];
+  playTone(f[0], 'sine', 0.14, 0.15);
+  playTone(f[1], 'sine', 0.14, 0.12, 0.08);
+  playTone(f[1]*1.5, 'sine', 0.08, 0.06, 0.16);
+}
+
+function playComplete() {
+  const notes = [523,659,784,1047];
+  notes.forEach((f,i) => playTone(f,'sine',0.2,0.13,i*0.1));
+  setTimeout(() => playTone(1568,'sine',0.3,0.1), 450);
+}
+
+function playWhoosh() {
+  try {
+    const buf = AC.createBuffer(1,AC.sampleRate*0.3,AC.sampleRate);
+    const d = buf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+    const s = AC.createBufferSource();
+    const g = AC.createGain();
+    const f = AC.createBiquadFilter();
+    f.type='bandpass'; f.frequency.value=1200; f.Q.value=0.5;
+    s.buffer=buf; s.connect(f); f.connect(g); g.connect(AC.destination);
+    g.gain.setValueAtTime(0.18,AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+0.3);
+    s.start();
+  } catch(e) {}
+}
+
+function playClear() {
+  [330,262,196].forEach((f,i) => playTone(f,'triangle',0.15,0.12,i*0.08));
+}
+
+// ── STAR FIELD ──
+(function(){
+  const c = document.getElementById('starfield');
+  const ctx = c.getContext('2d');
+  let W,H,stars=[];
+  function resize(){ W=c.width=window.innerWidth; H=c.height=window.innerHeight; }
+  function init(){
+    stars=[];
+    for(let i=0;i<140;i++) stars.push({
+      x:Math.random()*W, y:Math.random()*H,
+      r:Math.random()*1.4+.3,
+      a:Math.random(),
+      sp:Math.random()*.008+.003,
+      phase:Math.random()*Math.PI*2
+    });
+  }
+  function draw(t){
+    ctx.clearRect(0,0,W,H);
+    stars.forEach(s=>{
+      s.a = .3+.7*Math.abs(Math.sin(s.phase + t*s.sp));
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',()=>{ resize(); init(); });
+  resize(); init(); requestAnimationFrame(draw);
+})();
+
+// ── DATA ──
+const BOWLS = [
+  { id:'texture', label:'Texture', color:'#ff6b6b', glow:'rgba(255,107,107,.5)',
+    items:['Wobbly','Spiky','Fluffy','Slimy','Crispy','Melting','Bouncy','Stretchy','Bumpy','Sparkling','Rubbery','Squiggly','Puffy','Frozen','Glowing','Giant','Tiny','Floating','Invisible','Crinkly'] },
+  { id:'shape', label:'Shape', color:'#ffd93d', glow:'rgba(255,217,61,.5)',
+    items:['Star-shaped','Square','Spiral','Triangle','Blob','Diamond','Zigzag','Donut-shaped','Crescent','Cloud-shaped','Heart-shaped','Hexagon','Wavy','Lightning bolt','Pretzel','Bowtie','Mushroom-shaped','Arrow','Octopus-shaped','L-shaped'] },
+  { id:'subject', label:'Subject', color:'#4ecb71', glow:'rgba(78,203,113,.5)',
+    items:['Dragon','Robot','Snail','Pizza','Astronaut','Penguin','Wizard','Cat','Volcano','Submarine','Grandma','Dinosaur','Butterfly','Viking','Cactus','Jellyfish','Knight','Parrot','Donut','Unicorn'] },
+  { id:'colour', label:'Colour & Pattern', color:'#60a5fa', glow:'rgba(96,165,250,.5)',
+    items:['Rainbow striped','Polka dot','Camouflage','Tie-dye','Neon pink','Gold','Checkered','Midnight blue','Lava red','Electric green','Pastel','Zebra print','Galaxy','Sunflower yellow','Minty','Crimson','Chalk white','Stormy grey','Rusty orange','Glittery'] },
+];
+
+const picked = {};
+const pwClasses = ['pw1','pw2','pw3','pw4'];
+
+// ── BOWL SVG ──
+function makeBowlSVG(color, glow) {
+  return `<svg class="bowl-svg" viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="bg${color.slice(1)}" cx="50%" cy="30%" r="60%">
+        <stop offset="0%" stop-color="${color}" stop-opacity=".9"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity=".6"/>
+      </radialGradient>
+      <filter id="glow${color.slice(1)}">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- shadow -->
+    <ellipse cx="80" cy="112" rx="44" ry="7" fill="rgba(0,0,0,.35)"/>
+    <!-- body -->
+    <path d="M14 42 Q12 96 80 102 Q148 96 146 42 Z" fill="url(#bg${color.slice(1)})"/>
+    <!-- rim -->
+    <ellipse cx="80" cy="42" rx="66" ry="22" fill="${color}"/>
+    <!-- rim shine -->
+    <ellipse cx="80" cy="40" rx="58" ry="17" fill="${color}" opacity=".7"/>
+    <!-- inner rim dark -->
+    <ellipse cx="80" cy="42" rx="56" ry="15" fill="rgba(0,0,0,.12)"/>
+    <!-- highlight -->
+    <ellipse cx="68" cy="36" rx="28" ry="8" fill="rgba(255,255,255,.28)" transform="rotate(-8,68,36)"/>
+    <!-- small shine dot -->
+    <ellipse cx="56" cy="33" rx="8" ry="4" fill="rgba(255,255,255,.45)" transform="rotate(-8,56,33)"/>
+    <!-- inner depth -->
+    <ellipse cx="80" cy="75" rx="46" ry="12" fill="rgba(0,0,0,.08)"/>
+  </svg>`;
+}
+
+// ── PROGRESS PIPS ──
+// THEMES DATA
+const THEMES = [
+  { id:'any',   label:'Any World',    emoji:'🌀', color:'#a78bfa', glow:'rgba(167,139,250,.5)', desc:'' },
+  { id:'space', label:'Space',        emoji:'🚀', color:'#60a5fa', glow:'rgba(96,165,250,.5)',  desc:'floating in outer space among the stars and planets' },
+  { id:'ocean', label:'Ocean',        emoji:'🌊', color:'#22d3ee', glow:'rgba(34,211,238,.5)',  desc:'deep under the ocean surrounded by fish and coral' },
+  { id:'forest',label:'Magic Forest', emoji:'🌲', color:'#4ecb71', glow:'rgba(78,203,113,.5)',  desc:'in a magical glowing forest full of fairies and mushrooms' },
+  { id:'candy', label:'Candy Land',   emoji:'🍭', color:'#f472b6', glow:'rgba(244,114,182,.5)', desc:'inside a giant candy land made of sweets and lollipops' },
+  { id:'dino',  label:'Dino World',   emoji:'🦕', color:'#a3e635', glow:'rgba(163,230,53,.5)',  desc:'in a prehistoric jungle with giant dinosaurs stomping around' },
+  { id:'city',  label:'Future City',  emoji:'🏙️', color:'#f59e0b', glow:'rgba(245,158,11,.5)', desc:'in a glowing futuristic city with flying cars and robots' },
+];
+let activeTheme = 'any';
+
+function renderThemes() {
+  const row = document.getElementById('themeRow');
+  if(!row) return;
+  row.innerHTML = THEMES.map(t => {
+    const isActive = t.id==='any';
+    const style = isActive ? 'background:'+t.color+';--theme-glow:'+t.glow : '';
+    return '<button class="theme-btn'+(isActive?' active':'')+'" id="theme-'+t.id+'" style="'+style+'" onclick="setTheme(\''+t.id+'\')">'+'<span class="theme-mini">'+t.emoji+'</span>'+t.label+'</button>';
+  }).join('');
+}
+
+function setTheme(id) {
+  if(AC.state==='suspended') AC.resume();
+  activeTheme = id;
+  const t = THEMES.find(x=>x.id===id);
+  document.querySelectorAll('.theme-btn').forEach(b=>{
+    b.classList.remove('active'); b.style.background=''; b.style.setProperty('--theme-glow','');
+  });
+  const btn = document.getElementById('theme-'+id);
+  btn.classList.add('active'); btn.style.background=t.color; btn.style.setProperty('--theme-glow',t.glow);
+  playTone(660,'sine',.1,.1); setTimeout(()=>playTone(880,'sine',.1,.1),80);
+  ['nameCard','inspCard'].forEach(cid=>document.getElementById(cid).classList.remove('visible'));
+  ['inspText','nameValue','nameTagline'].forEach(cid=>{ const el=document.getElementById(cid); if(el) el.textContent=''; });
+  const nb=document.getElementById('nameBtn');
+  if(nb && nb.classList.contains('visible')){ nb.textContent='🏷️ Name it!'; nb.disabled=false; }
+}
+
+async function getName() {
+  if(AC.state==='suspended') AC.resume();
+  const {texture,shape,subject,colour}=picked;
+  const theme=THEMES.find(t=>t.id===activeTheme);
+  const btn=document.getElementById('nameBtn');
+  const card=document.getElementById('nameCard');
+  const val=document.getElementById('nameValue');
+  const tagline=document.getElementById('nameTagline');
+  btn.disabled=true; btn.textContent='🏷️ Thinking…';
+  card.classList.add('visible');
+  val.innerHTML='<div class="loading-dots" style="color:rgba(251,191,36,.8)">Inventing a name <div class="dot" style="background:#fbbf24"></div><div class="dot" style="background:#fbbf24"></div><div class="dot" style="background:#fbbf24"></div></div>';
+  tagline.textContent=''; playWhoosh();
+  const worldHint = theme.id!=='any' ? ' They live '+theme.desc+'.' : '';
+  const prompt='A child drew a '+texture+', '+colour+', '+shape+' '+subject+'.'+worldHint+' Invent a wonderfully silly memorable character name like "Bloop the Zigzag Dragon". Return ONLY a JSON object: {"name": "...", "tagline": "..."} where name is funny (2-5 words) and tagline is one short funny sentence about their superpower (max 12 words, for a 7-year-old). No markdown.';
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:200,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    const raw=data.content?.find(b=>b.type==='text')?.text||'{}';
+    const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    val.textContent=parsed.name||'Zibble the Unnamed One';
+    tagline.textContent=parsed.tagline||'A truly one-of-a-kind creation!';
+    [523,659,784,1047].forEach((f,i)=>playTone(f,'sine',.15,.1,i*.08));
+  } catch(e){ val.textContent='Zibble the Unnamed One'; tagline.textContent='Too mysterious for a name!'; }
+  btn.disabled=false; btn.textContent='🏷️ Another name!';
+}
+
+function renderPips() {
+  const row = document.getElementById('progressRow');
+  row.innerHTML = BOWLS.map((b,i) => `<div class="pip" id="pip${i}" style="--pip-color:${b.color}"></div>`).join('');
+}
+
+// ── RENDER BOWLS ──
+function renderBowls() {
+  const grid = document.getElementById('bowlsGrid');
+  grid.innerHTML = BOWLS.map((b,i) => `
+    <div class="bowl-col" style="animation:fadeUp .5s ${.35+i*.07}s ease both">
+      <div class="bowl-label" style="color:${b.color}">${b.label}</div>
+      <button class="bowl-btn" id="bowl-${b.id}" onclick="pickBowl('${b.id}',this)" title="Pick from ${b.label}">
+        <div class="slips" style="--r:-14deg">
+          <div class="slip"></div><div class="slip"></div><div class="slip"></div>
+        </div>
+        ${makeBowlSVG(b.color, b.glow)}
+      </button>
+      <div class="badge empty" id="badge-${b.id}">tap bowl!</div>
+      <button class="pick-btn" style="background:${b.color};box-shadow:0 4px 0 rgba(0,0,0,.35)"
+        onclick="pickBowl('${b.id}',document.getElementById('bowl-${b.id}'))">Pick!</button>
+    </div>
+  `).join('');
+}
+
+// ── PARTICLES ──
+function burst(el, color, count=8) {
+  const r = el.getBoundingClientRect();
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const emojis = ['⭐','✨','🌟','💫','🎉','🌈','💥','🎊'];
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    const ang = (i/count)*Math.PI*2;
+    const dist = 55 + Math.random()*70;
+    p.style.left = cx+'px'; p.style.top = cy+'px';
+    p.style.setProperty('--tx', Math.cos(ang)*dist+'px');
+    p.style.setProperty('--ty', Math.sin(ang)*dist+'px');
+    p.style.setProperty('--rot', (Math.random()*360)+'deg');
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(), 900);
+  }
+}
+
+function bigBurst(el) {
+  const r = el.getBoundingClientRect();
+  const emojis=['🎨','⭐','✨','🌈','💫','🎉','🌟','🎊','💥'];
+  for(let i=0;i<18;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div'); p.className='particle';
+      p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      p.style.left=(r.left+Math.random()*r.width)+'px';
+      p.style.top=(r.top+r.height*.3)+'px';
+      const ang=-Math.PI/2+(Math.random()-.5)*Math.PI;
+      const dist=90+Math.random()*110;
+      p.style.setProperty('--tx',Math.cos(ang)*dist+'px');
+      p.style.setProperty('--ty',Math.sin(ang)*dist+'px');
+      p.style.setProperty('--rot',(Math.random()*360)+'deg');
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),1000);
+    },i*45);
+  }
+}
+
+// ── PICK ──
+function pickBowl(id, btnEl) {
+  if(AC.state==='suspended') AC.resume();
+  const bowl = BOWLS.find(b=>b.id===id);
+  const item = bowl.items[Math.floor(Math.random()*bowl.items.length)];
+  picked[id] = item;
+
+  // wobble
+  const bBtn = document.getElementById('bowl-'+id);
+  bBtn.classList.remove('wobble'); void bBtn.offsetWidth; bBtn.classList.add('wobble');
+  setTimeout(()=>bBtn.classList.remove('wobble'),550);
+
+  // sound
+  playPick(bowl.color);
+
+  // particles
+  burst(bBtn, bowl.color);
+
+  // badge
+  const badge = document.getElementById('badge-'+id);
+  badge.className='badge filled';
+  badge.style.background=bowl.color;
+  badge.style.boxShadow=`0 0 16px ${bowl.glow}, 0 4px 12px rgba(0,0,0,.3)`;
+  badge.textContent=item;
+
+  // pip
+  const pipIdx = BOWLS.findIndex(b=>b.id===id);
+  const pip = document.getElementById('pip'+pipIdx);
+  pip.style.background=bowl.color; pip.classList.add('done');
+
+  updatePrompt();
+}
+
+// ── PROMPT ──
+function updatePrompt() {
+  const card = document.getElementById('promptCard');
+  const count = BOWLS.filter(b=>picked[b.id]).length;
+
+  if(count===0){
+    card.innerHTML=`<span class="spin-star">⭐</span><p class="prompt-waiting">Pick from all 4 bowls to reveal your prompt!</p>`;
+    card.classList.remove('complete'); return;
+  }
+  if(count<4){
+    const left=4-count;
+    card.innerHTML=`<span class="spin-star">⭐</span><p class="prompt-waiting">${left} more bowl${left>1?'s':''} to go…</p>`;
+    card.classList.remove('complete'); return;
+  }
+
+  const {texture,shape,subject,colour}=picked;
+  card.className='prompt-card complete';
+  card.innerHTML=`
+    <span class="spin-star">⭐</span>
+    <div class="prompt-label">✏️ Draw this!</div>
+    <div class="prompt-words">
+      <span class="pw1">${texture}</span><span class="sep">·</span>
+      <span class="pw2">${colour}</span><span class="sep">·</span>
+      <span class="pw3">${shape}</span>
+      <br>
+      <span style="color:rgba(240,237,255,.35);font-size:.8em">— </span>
+      <span class="pw4">${subject}</span>
+    </div>
+  `;
+
+  bigBurst(card);
+  playComplete();
+  document.getElementById('inspireBtn').classList.add('visible');
+  document.getElementById('nameBtn').classList.add('visible');
+  document.getElementById('nameBtn').classList.add('visible');
+  document.getElementById('inspCard').classList.remove('visible');
+  document.getElementById('inspText').textContent='';
+  document.getElementById('nameCard').classList.remove('visible');
+  document.getElementById('nameValue').textContent='';
+  document.getElementById('nameTagline').textContent='';
+  document.getElementById('nameCard').classList.remove('visible');
+  document.getElementById('nameValue').textContent='';
+  document.getElementById('nameTagline').textContent='';
+}
+
+// ── INSPIRE ──
+async function getInspiration() {
+  if(AC.state==='suspended') AC.resume();
+  const {texture,shape,subject,colour}=picked;
+  const btn=document.getElementById('inspireBtn');
+  const card=document.getElementById('inspCard');
+  const textEl=document.getElementById('inspText');
+
+  btn.disabled=true; btn.textContent='✨ Thinking…';
+  card.classList.add('visible');
+  textEl.innerHTML=`<div class="loading-dots">Dreaming something up <div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+  playWhoosh();
+
+  const sysPrompt=`You are a magical, warm art guide talking to a 7-year-old child. Your job is to paint a vivid picture with words — funny, surprising, and delightful — to spark their imagination before they draw. Keep it simple, playful, and full of wonder. Never say "draw" or give instructions. Just describe a little world.`;
+  const theme=THEMES.find(t=>t.id===activeTheme);const worldLine=theme.id!=='any'?' Set the scene '+theme.desc+'. ':'';const userPrompt=`A child picked these random art prompt words: texture="${texture}", colour/pattern="${colour}", shape="${shape}", subject="${subject}".${worldLine} Write 2-3 short vivid sentences that help the child imagine what this could look like. Be funny and specific — mention what it's doing, where it is, or something hilariously unexpected about it. Use simple words a 7-year-old loves.`;
+
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-haiku-4-5-20251001',
+        max_tokens:1000,
+        system:sysPrompt,
+        messages:[{role:'user',content:userPrompt}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.find(b=>b.type==='text')?.text||'Wow, this one is SO wild only YOU can imagine it!';
+    textEl.textContent=text;
+    // play a little chime
+    [880,1047,1319].forEach((f,i)=>playTone(f,'sine',.15,.1,i*.1));
+  } catch(e) {
+    textEl.textContent='Oops, my imagination got tangled up! Give it another try?';
+  }
+  btn.disabled=false; btn.textContent='✨ Another spark!';
+}
+
+// ── SHUFFLE ──
+function shuffleAll() {
+  if(AC.state==='suspended') AC.resume();
+  playWhoosh();
+  BOWLS.forEach((b,i)=>{
+    setTimeout(()=>pickBowl(b.id, document.getElementById('bowl-'+b.id)), i*120);
+  });
+}
+
+// ── CLEAR ──
+function clearAll() {
+  if(AC.state==='suspended') AC.resume();
+  playClear();
+  BOWLS.forEach((b,i)=>{
+    delete picked[b.id];
+    const badge=document.getElementById('badge-'+b.id);
+    badge.className='badge empty'; badge.style.background=''; badge.style.boxShadow=''; badge.textContent='tap bowl!';
+    const pip=document.getElementById('pip'+i);
+    pip.style.background=''; pip.classList.remove('done');
+  });
+  document.getElementById('promptCard').className='prompt-card';
+  document.getElementById('promptCard').innerHTML=`<span class="spin-star">⭐</span><p class="prompt-waiting">Pick from all 4 bowls to reveal your prompt!</p>`;
+  document.getElementById('inspireBtn').classList.remove('visible');
+  document.getElementById('nameBtn').classList.remove('visible');
+  document.getElementById('nameCard').classList.remove('visible');
+  document.getElementById('nameValue').textContent='';
+  document.getElementById('nameTagline').textContent='';
+  document.getElementById('nameBtn').classList.remove('visible');
+  document.getElementById('inspCard').classList.remove('visible');
+  document.getElementById('nameCard').classList.remove('visible');
+  document.getElementById('inspText').textContent='';
+  document.getElementById('nameValue').textContent='';
+  document.getElementById('nameTagline').textContent='';
+}
+
+// ── INIT ──
+renderThemes();
+renderPips();
+renderBowls();
+</script>
+</body>
+</html>
