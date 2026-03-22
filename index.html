@@ -574,7 +574,7 @@ async function getName() {
   const worldHint = theme.id!=='any' ? ' They live '+theme.desc+'.' : '';
   const prompt='A child drew a '+texture+', '+colour+', '+shape+' '+subject+'.'+worldHint+' Invent a wonderfully silly memorable character name like "Bloop the Zigzag Dragon". Return ONLY a JSON object: {"name": "...", "tagline": "..."} where name is funny (2-5 words) and tagline is one short funny sentence about their superpower (max 12 words, for a 7-year-old). No markdown.';
   try {
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/chat',{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:200,messages:[{role:'user',content:prompt}]})
     });
@@ -747,7 +747,7 @@ async function getInspiration() {
   const theme=THEMES.find(t=>t.id===activeTheme);const worldLine=theme.id!=='any'?' Set the scene '+theme.desc+'. ':'';const userPrompt=`A child picked these random art prompt words: texture="${texture}", colour/pattern="${colour}", shape="${shape}", subject="${subject}".${worldLine} Write 2-3 short vivid sentences that help the child imagine what this could look like. Be funny and specific — mention what it's doing, where it is, or something hilariously unexpected about it. Use simple words a 7-year-old loves.`;
 
   try {
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
